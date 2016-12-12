@@ -59,9 +59,6 @@ class BaseTest(unittest.TestCase):
         sauce_client = SauceClient(BaseTest.username, BaseTest.access_key)
         status = (sys.exc_info() == (None, None, None))
         sauce_client.jobs.update_job(self.driver.session_id, passed=status)
-        #test_name = "%s_%s" % (type(self).__name__, self.__name__)
-        #with(open(test_name + '.testlog', 'w')) as outfile:
-        #    outfile.write("SauceOnDemandSessionID=%s job-name=%s\n" % (self.driver.session_id, test_name))
 
     @classmethod
     def setup_class(cls):
@@ -69,10 +66,5 @@ class BaseTest(unittest.TestCase):
         cls.tunnel_id = os.environ.get('TUNNEL_IDENTIFIER', None)
         cls.username = os.environ.get('SAUCE_USERNAME', None)
         cls.access_key = os.environ.get('SAUCE_ACCESS_KEY', None)
-
         cls.selenium_port = os.environ.get("SELENIUM_PORT", None)
-        if cls.selenium_port:
-            cls.selenium_host = "localhost"
-        else:
-            cls.selenium_host = "ondemand.saucelabs.com"
-            cls.selenium_port = "80"
+        cls.selenium_host = os.environ.get("SELENIUM_HOST", None)
