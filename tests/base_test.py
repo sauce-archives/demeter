@@ -6,13 +6,8 @@ import time
 from selenium import webdriver
 from sauceclient import SauceClient
 
-browsers = [{
-    "platform": "Windows 10",
-    "browserName": "chrome",
-    "version": "latest",
-    "screenResolution": "1280x1024"
-}]
-
+#These values are loaded via the Sauce Labs plugin in Jenkins
+browsers =  os.environ.get("SAUCE_ONDEMAND_BROWSERS", None)
 
 # This decorator is required to iterate over browsers
 def on_platforms(platforms):
