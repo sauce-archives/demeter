@@ -3,6 +3,7 @@ import os
 import sys
 import new
 import time
+import json
 from selenium import webdriver
 from sauceclient import SauceClient
 
