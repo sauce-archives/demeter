@@ -6,8 +6,8 @@ import time
 from selenium import webdriver
 from sauceclient import SauceClient
 
-#These values are loaded via the Sauce Labs plugin in Jenkins
-browsers =  os.environ.get("SAUCE_ONDEMAND_BROWSERS", None)
+with open('browsers.json') as browsers:
+   browsers = json.loads(browsers.read())
 
 # This decorator is required to iterate over browsers
 def on_platforms(platforms):
