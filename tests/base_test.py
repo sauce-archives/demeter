@@ -49,7 +49,7 @@ class BaseTest(unittest.TestCase):
                                   BaseTest.selenium_host,
                                   BaseTest.selenium_port),
                 desired_capabilities=self.desired_capabilities)
-      self.driver.implicitly_wait(60)
+        self.driver.implicitly_wait(60)
 
     # tearDown runs after each test case
     def tearDown(self):
