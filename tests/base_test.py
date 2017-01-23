@@ -4,6 +4,7 @@ import sys
 import new
 import time
 import json
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium import webdriver
 from sauceclient import SauceClient
 
@@ -28,27 +29,30 @@ class BaseTest(unittest.TestCase):
     access_key = None
     selenium_port = None
     selenium_host = None
+    connection_protocol = None
     upload = True
-    tunnel_id = None
+    tunnel_identifier = None
     build_tag = None
 
     # setUp runs before each test case
     def setUp(self):
         name = self.id().split('.')
         self.desired_capabilities['name'] = name[-1]
-
-        if BaseTest.tunnel_id:
-            self.desired_capabilities['tunnel-identifier'] = BaseTest.tunnel_id
+        if BaseTest.tunnel_identifier:
+            self.desired_capabilities['tunnel-identifier'] = BaseTest.tunnel_identifier
         if BaseTest.build_tag:
             self.desired_capabilities['build'] = BaseTest.build_tag
 
-        self.driver = webdriver.Remote(
-                command_executor="http://%s:%s@%s:%s/wd/hub" %
-                                 (BaseTest.username,
-                                  BaseTest.access_key,
-                                  BaseTest.selenium_host,
-                                  BaseTest.selenium_port),
-                desired_capabilities=self.desired_capabilities)
+        #Generate complete remote connection string
+        complete_connection_string = "%s%s:%s@%s:%s/wd/hub" % (BaseTest.connection_protocol,BaseTest.username,BaseTest.access_key,BaseTest.selenium_host,BaseTest.selenium_port)
+        
+        #due to a bug in the python version of selenium, when using an encrypted endpoint we must disable IP resolution or else it fails with an SSL name mismatch error
+        if self.connection_protocol=="https://":
+            executor = RemoteConnection(complete_connection_string, resolve_ip=False)
+        else:
+            executor = RemoteConnection(complete_connection_string)
+
+        self.driver = webdriver.Remote(executor, self.desired_capabilities)
         self.driver.implicitly_wait(60)
 
     # tearDown runs after each test case
@@ -59,10 +63,11 @@ class BaseTest(unittest.TestCase):
         sauce_client.jobs.update_job(self.driver.session_id, passed=status)
 
     @classmethod
-    def setup_class(cls):
-        cls.build_tag = os.environ.get('BUILD_TAG', None)
-        cls.tunnel_id = os.environ.get('TUNNEL_IDENTIFIER', None)
+    def setup_class(cls, connection_protocol, selenium_host, selenium_port, tunnel_identifier):
+        cls.connection_protocol = connection_protocol
+        cls.selenium_port = selenium_port
+        cls.selenium_host = selenium_host
+        cls.tunnel_identifier = tunnel_identifier
         cls.username = os.environ.get('SAUCE_USERNAME', None)
         cls.access_key = os.environ.get('SAUCE_ACCESS_KEY', None)
-        cls.selenium_port = os.environ.get("SELENIUM_PORT", None)
-        cls.selenium_host = os.environ.get("SELENIUM_HOST", None)
+        cls.build_tag = os.environ.get('BUILD_TAG', None)
