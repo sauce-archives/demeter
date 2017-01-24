@@ -1,0 +1,121 @@
+[{
+    "platform": "Windows 10",
+    "browserName": "MicrosoftEdge",
+    "version": "latest"
+},{
+    "platform": "Windows 10",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "Windows 10",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "Windows 10",
+    "browserName": "internet explorer",
+    "version": "latest"
+},{
+    "platform": "Windows 8.1",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "Windows 8.1",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "Windows 8.1",
+    "browserName": "internet explorer",
+    "version": "latest"
+},{
+    "platform": "Windows 8",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "Windows 8",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "Windows 8",
+    "browserName": "internet explorer",
+    "version": "latest"
+},{
+    "platform": "Windows 7",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "Windows 7",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "Windows 7",
+    "browserName": "internet explorer",
+    "version": "latest"
+},{
+	"platform": "Windows 7",
+    "browserName": "safari",
+    "version": "latest"
+},{
+    "platform": "Windows xp",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "Windows xp",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+    "platform": "linux",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "linux",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "os x 10.11",
+    "browserName": "safari",
+    "version": "latest"
+},{
+    "platform": "os x 10.11",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "os x 10.11",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "os x 10.10",
+    "browserName": "safari",
+    "version": "latest"
+},{
+    "platform": "os x 10.10",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "os x 10.10",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "os x 10.9",
+    "browserName": "safari",
+    "version": "latest"
+},{
+    "platform": "os x 10.9",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "os x 10.9",
+    "browserName": "firefox",
+    "version": "latest"
+},{
+	"platform": "os x 10.8",
+    "browserName": "safari",
+    "version": "latest"
+},{
+    "platform": "os x 10.8",
+    "browserName": "chrome",
+    "version": "latest"
+},{
+	"platform": "os x 10.8",
+    "browserName": "firefox",
+    "version": "latest"
+}]

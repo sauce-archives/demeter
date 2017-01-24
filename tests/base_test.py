@@ -3,16 +3,13 @@ import os
 import sys
 import new
 import time
+import json
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium import webdriver
 from sauceclient import SauceClient
 
-browsers = [{
-    "platform": "Windows 10",
-    "browserName": "chrome",
-    "version": "latest",
-    "screenResolution": "1280x1024"
-}]
-
+with open('browsers.json') as browsers:
+   browsers = json.loads(browsers.read())
 
 # This decorator is required to iterate over browsers
 def on_platforms(platforms):
@@ -32,26 +29,31 @@ class BaseTest(unittest.TestCase):
     access_key = None
     selenium_port = None
     selenium_host = None
+    connection_protocol = None
     upload = True
-    tunnel_id = None
+    tunnel_identifier = None
     build_tag = None
 
     # setUp runs before each test case
     def setUp(self):
-        self.desired_capabilities['name'] = self.id()
-
-        if BaseTest.tunnel_id:
-            self.desired_capabilities['tunnel-identifier'] = BaseTest.tunnel_id
+        name = self.id().split('.')
+        self.desired_capabilities['name'] = name[-1]
+        if BaseTest.tunnel_identifier:
+            self.desired_capabilities['tunnel-identifier'] = BaseTest.tunnel_identifier
         if BaseTest.build_tag:
             self.desired_capabilities['build'] = BaseTest.build_tag
 
-        self.driver = webdriver.Remote(
-                command_executor="http://%s:%s@%s:%s/wd/hub" %
-                                 (BaseTest.username,
-                                  BaseTest.access_key,
-                                  BaseTest.selenium_host,
-                                  BaseTest.selenium_port),
-                desired_capabilities=self.desired_capabilities)
+        #Generate complete remote connection string
+        complete_connection_string = "%s%s:%s@%s:%s/wd/hub" % (BaseTest.connection_protocol,BaseTest.username,BaseTest.access_key,BaseTest.selenium_host,BaseTest.selenium_port)
+        
+        #due to a bug in the python version of selenium, when using an encrypted endpoint we must disable IP resolution or else it fails with an SSL name mismatch error
+        if self.connection_protocol=="https://":
+            executor = RemoteConnection(complete_connection_string, resolve_ip=False)
+        else:
+            executor = RemoteConnection(complete_connection_string)
+
+        self.driver = webdriver.Remote(executor, self.desired_capabilities)
+        self.driver.implicitly_wait(60)
 
     # tearDown runs after each test case
     def tearDown(self):
@@ -59,20 +61,13 @@ class BaseTest(unittest.TestCase):
         sauce_client = SauceClient(BaseTest.username, BaseTest.access_key)
         status = (sys.exc_info() == (None, None, None))
         sauce_client.jobs.update_job(self.driver.session_id, passed=status)
-        #test_name = "%s_%s" % (type(self).__name__, self.__name__)
-        #with(open(test_name + '.testlog', 'w')) as outfile:
-        #    outfile.write("SauceOnDemandSessionID=%s job-name=%s\n" % (self.driver.session_id, test_name))
 
     @classmethod
-    def setup_class(cls):
-        cls.build_tag = os.environ.get('BUILD_TAG', None)
-        cls.tunnel_id = os.environ.get('TUNNEL_IDENTIFIER', None)
+    def setup_class(cls, connection_protocol, selenium_host, selenium_port, tunnel_identifier):
+        cls.connection_protocol = connection_protocol
+        cls.selenium_port = selenium_port
+        cls.selenium_host = selenium_host
+        cls.tunnel_identifier = tunnel_identifier
         cls.username = os.environ.get('SAUCE_USERNAME', None)
         cls.access_key = os.environ.get('SAUCE_ACCESS_KEY', None)
-
-        cls.selenium_port = os.environ.get("SELENIUM_PORT", None)
-        if cls.selenium_port:
-            cls.selenium_host = "localhost"
-        else:
-            cls.selenium_host = "ondemand.saucelabs.com"
-            cls.selenium_port = "80"
+        cls.build_tag = os.environ.get('BUILD_TAG', None)
