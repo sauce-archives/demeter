@@ -37,7 +37,7 @@ class BaseTest(unittest.TestCase):
     # setUp runs before each test case
     def setUp(self):
         name = self.id().split('.')
-        self.desired_capabilities['name'] = name[-1]
+        self.desired_capabilities['name'] = name[-3] + '.' + name[-1]
         if BaseTest.tunnel_identifier:
             self.desired_capabilities['tunnel-identifier'] = BaseTest.tunnel_identifier
         if BaseTest.build_tag:
