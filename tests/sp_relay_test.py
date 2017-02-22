@@ -13,17 +13,17 @@ class SaucelabsWebTests(BaseTest):
         tunnel_identifier = os.environ.get('TUNNEL_IDENTIFIER', None)
         BaseTest.setup_class(connection_protocol, selenium_host, selenium_port, tunnel_identifier)
 
-    #Verify that the SauceLabs.com homepage comes up
+    #Verify that the google.com homepage comes up
     def test_googleHomePage(self):
-        self.driver.get('https://saucelabs.com/')
-        title = "Cross Browser Testing, Selenium Testing, and Mobile Testing | Sauce Labs"
-        self.assertEqual(title, self.driver.title, "Homepage title does not match")
+        self.driver.get('https://google.com/')
+        title = "Google"
+        self.assertEqual(title, self.driver.title, "Google Homepage title does not match")
 
     #Verify that the SauceLabs.com homepage comes up
     def test_sauceLabsHomePage(self):
         self.driver.get('https://saucelabs.com/')
         title = "Cross Browser Testing, Selenium Testing, and Mobile Testing | Sauce Labs"
-        self.assertEqual(title, self.driver.title, "Homepage title does not match")
+        self.assertEqual(title, self.driver.title, "Sauce labs Homepage title does not match")
 
     #Verify that a user can login to the service and reach it's dashboard
     def test_sauceLabsDashboard(self):
