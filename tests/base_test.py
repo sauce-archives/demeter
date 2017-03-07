@@ -4,6 +4,7 @@ import sys
 import new
 import time
 import json
+import logging, logging.handlers
 from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium import webdriver
 from sauceclient import SauceClient
@@ -23,7 +24,6 @@ def on_platforms(platforms):
 
     return decorator
 
-
 class BaseTest(unittest.TestCase):
     username = None
     access_key = None
@@ -33,11 +33,16 @@ class BaseTest(unittest.TestCase):
     upload = True
     tunnel_identifier = None
     build_tag = None
+    if os.environ.get('ENABLE_SAUCE_REPORTING', None) == 'True':
+        enableReporting = 1
+    else:
+        enableReporting = None
 
     # setUp runs before each test case
     def setUp(self):
         name = self.id().split('.')
         self.desired_capabilities['name'] = name[-3] + '.' + name[-1]
+
         if BaseTest.tunnel_identifier:
             self.desired_capabilities['tunnel-identifier'] = BaseTest.tunnel_identifier
         if BaseTest.build_tag:
@@ -63,7 +68,7 @@ class BaseTest(unittest.TestCase):
         sauce_client.jobs.update_job(self.driver.session_id, passed=status)
 
     @classmethod
-    def setup_class(cls, connection_protocol, selenium_host, selenium_port, tunnel_identifier):
+    def setup_class(cls, connection_protocol, selenium_host, selenium_port, tunnel_identifier, logger):
         cls.connection_protocol = connection_protocol
         cls.selenium_port = selenium_port
         cls.selenium_host = selenium_host
@@ -71,3 +76,4 @@ class BaseTest(unittest.TestCase):
         cls.username = os.environ.get('SAUCE_USERNAME', None)
         cls.access_key = os.environ.get('SAUCE_ACCESS_KEY', None)
         cls.build_tag = os.environ.get('BUILD_TAG', None)
+        cls.logger = logger

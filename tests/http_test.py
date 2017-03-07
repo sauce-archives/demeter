@@ -9,22 +9,36 @@ class SaucelabsWebTests(BaseTest):
         connection_protocol = "http://"
         selenium_host = "ondemand.saucelabs.com"
         selenium_port = "80"
-        BaseTest.setup_class(connection_protocol, selenium_host, selenium_port, None)
+        logger = logging.getLogger('http_test')
+        logger.setLevel(logging.INFO)
+        socketHandler = logging.handlers.SocketHandler('localhost',
+                logging.handlers.DEFAULT_TCP_LOGGING_PORT)
+        logger.addHandler(socketHandler)
+        BaseTest.setup_class(connection_protocol, selenium_host, selenium_port, None, logger)
 
     #Verify that the google.com homepage comes up
     def test_googleHomePage(self):
+        if self.enableReporting:
+            name = self.id()
+            self.logger.info(name + ', action, timestamp, result')
         self.driver.get('https://google.com/')
         title = "Google"
         self.assertEqual(title, self.driver.title, "Google Homepage title does not match")
         
     #Verify that the SauceLabs.com homepage comes up
     def test_sauceLabsHomePage(self):
+        if self.enableReporting:
+            name = self.id()
+            self.logger.info(name + ', action, timestamp, result')
         self.driver.get('https://saucelabs.com/')
         title = "Cross Browser Testing, Selenium Testing, and Mobile Testing | Sauce Labs"
         self.assertEqual(title, self.driver.title, "Sauce Labs Homepage title does not match")
 
     #Verify that a user can login to the service and reach it's dashboard
     def test_sauceLabsDashboard(self):
+        if self.enableReporting:
+            name = self.id()
+            self.logger.info(name + ', action, timestamp, result')
         #login to Saucelabs.com
         self.driver.get('https://saucelabs.com/beta/login')
         self.driver.find_element_by_name('username').send_keys('testybesty10')
